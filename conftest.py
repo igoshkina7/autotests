@@ -1,15 +1,54 @@
 import pytest
 from core.api_client import APIClient
-from config.config import BASE_URL
+from config.config import BASE_API_URL, BASE_URL
 from playwright.sync_api import sync_playwright
-from pages.login_page import LoginPage
-from pages.inventory_page import InventoryPage
 import re
 from pathlib import Path
+import requests
+from api.clients.auth_client import AuthClient
+from api.clients.notes_client import NotesClient
+from data.users import TEST_USER
+from pages.notes_page import NotesPage
+
+@pytest.fixture(scope="session")
+def api_session():
+    return requests.Session()
+
+@pytest.fixture
+def auth_client(api_session):
+    return AuthClient(api_session)
+
+@pytest.fixture
+def notes_client(api_session):
+    return NotesClient(api_session)
+
+@pytest.fixture
+def authorized_page(page, auth_client):
+    token = auth_client.login(
+        TEST_USER["email"],
+        TEST_USER["password"]
+    )
+
+    page.add_init_script(
+        f"""
+        localStorage.setItem(
+            "token",
+            "{token}"
+        )
+        """
+    )
+
+    page.goto(BASE_URL, wait_until="domcontentloaded")
+
+    return page
+
+@pytest.fixture
+def notes(authorized_page):
+    return NotesPage(authorized_page)
 
 @pytest.fixture(scope="session")
 def api():
-    return APIClient(BASE_URL)
+    return APIClient(BASE_API_URL)
 
 @pytest.fixture
 def page(request):
@@ -130,4 +169,6 @@ def pytest_runtest_makereport(item, call):
 
     if report.when == "call":
         setattr(item, "rep_call", report)
+
+
 

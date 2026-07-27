@@ -1,3 +1,5 @@
 playwright==1.53.0
 pytest==8.4.1
 requests==2.32.4
+Faker
+python-dotenv

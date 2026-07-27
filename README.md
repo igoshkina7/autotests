@@ -1,121 +1,86 @@
-# UI Test Automation Framework
+Notes App Test Automation Framework
 
-A UI test automation framework built with **Python**, **Pytest**, and **Playwright** using the **Page Object Model (POM)** design pattern.
+Automation framework for the Notes App built with Python, Pytest, Playwright, and Requests.
 
-The project demonstrates a scalable test architecture with reusable page components, fixtures, test hooks, screenshots, tracing, and clean project organization.
+The project demonstrates a scalable automation architecture combining UI and API testing using the Page Object Model (POM) and reusable API clients.
 
----
+Tech Stack
+Python
+Pytest
+Playwright
+Requests
+Faker
+Page Object Model
+Factory Pattern
+Project Structure
+api/
+config/
+core/
+data/
+pages/
+tests/
+utils/
 
-## Tech Stack
+conftest.py
+pytest.ini
+requirements.txt
+README.md
+Features
+UI automation with Playwright
+API automation with Requests
+Page Object Model
+Reusable API clients
+Test data factories
+Structured logging
+Environment configuration
+Playwright tracing
+Screenshot capture on failure
+Test Coverage
+API
+User registration
+Login
+Create note
+Edit note
+Delete note
+UI
+Create note
+Edit note
+Delete note
+Complete note
+Search
+Category filtering
+Run tests
 
-* Python 3.11
-* Pytest
-* Playwright
-* Requests
-* Page Object Model (POM)
+Install
 
----
-
-## Project Structure
-
-```
-autotests/
-
-├── artifacts/
-│   ├── screenshots/
-│   ├── traces/
-│   └── reports/
-│
-├── config/
-├── core/
-├── data/
-├── logs/
-├── pages/
-│   ├── components/
-│
-├── tests/
-│   └── ui/
-│
-├── utils/
-│
-├── conftest.py
-├── pytest.ini
-├── requirements.txt
-└── README.md
-```
-
----
-
-## Features
-
-* Page Object Model
-* Reusable page components
-* Pytest fixtures
-* Test hooks
-* Automatic screenshots on test failure
-* Playwright trace generation
-* Environment configuration
-* Structured logging
-
----
-
-## Test Coverage
-
-Current UI scenarios include:
-
-* Login
-* Inventory page
-* Shopping cart
-* Add/remove products
-* Navigation
-* Cart validation
-
----
-
-## Run Tests
-
-Install dependencies
-
-```bash
 pip install -r requirements.txt
-```
+playwright install
 
-Run all UI tests
+Run all tests
 
-```bash
 pytest
-```
 
-Run smoke tests
+Run only API
 
-```bash
-pytest -m smoke
-```
+pytest tests/api
 
----
+Run only UI
 
-## Artifacts
+pytest tests/integration
+Architecture
 
-Failed tests automatically generate:
+The project follows several automation best practices:
 
-* Screenshot
-* Playwright Trace
-
-Artifacts are stored in:
-
-```
-artifacts/
-```
-
----
-
-## Project Goals
-
-This project is being continuously improved to include:
-
-* API testing
-* UI + API integration
-* CI/CD (GitHub Actions)
-* HTML reports
-* Parallel execution
-* Production-like automation architecture
+Page Object Model
+Component Objects
+Factory Pattern
+API Client Pattern
+Pytest Fixtures
+Test Isolation
+Explicit waits
+Reusable test data
+Future Improvements
+GitHub Actions
+HTML reports
+Parallel execution (pytest-xdist)
+Docker support

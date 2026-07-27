@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 
-# Virtual env
+# Virtual environments
 .venv/
 venv/
 env/
@@ -19,14 +19,11 @@ env/
 
 # Playwright
 playwright-report/
+test-results/
 
 # Artifacts
-artifacts/screenshots/
-artifacts/traces/
-artifacts/reports/
-
-# Logs
-logs/*.log
+artifacts/
+logs/
 
 # OS
 .DS_Store

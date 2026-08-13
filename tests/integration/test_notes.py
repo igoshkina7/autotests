@@ -3,7 +3,7 @@ from playwright.sync_api import expect
 from data.factories.note_factory import NoteFactory
 
 def test_notes_page_open(notes):
-    assert notes.add_note_button.is_visible()
+    expect(notes.add_note_button).is_visible()
     
 def test_create_note(notes, notes_client):
     created_data = NoteFactory.create()

@@ -70,8 +70,9 @@ class NotesPage(BasePage):
         return NoteCard(self.page, card)
     
     def get_completed_count(self):
+        expect(self.progress_label).to_contain_text("/")
+    
         text = self.progress_label.text_content()
-
         return int(re.search(r"(\d+)/", text).group(1))
     
     def create_note(self, data):

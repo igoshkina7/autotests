@@ -1,11 +1,10 @@
-from data.users import TEST_USER
 from data.notes import NOTE
 
-def test_create_note(auth_client, notes_client):
+def test_create_note(auth_client, notes_client, test_user):
 
     auth_client.login(
-        TEST_USER["email"],
-        TEST_USER["password"]
+        test_user["email"],
+        test_user["password"]
     )
 
     response = notes_client.create_note(NOTE)
@@ -18,10 +17,10 @@ def test_create_note(auth_client, notes_client):
 
     assert get_response.status_code == 200
 
-def test_update_note(auth_client, notes_client):
+def test_update_note(auth_client, notes_client, test_user):
     auth_client.login(
-        TEST_USER["email"],
-        TEST_USER["password"]
+        test_user["email"],
+        test_user["password"]
     )
 
     note_data = {
@@ -51,10 +50,10 @@ def test_update_note(auth_client, notes_client):
     assert body_update_note["data"]["description"] == note_data["description"]
     assert body_update_note["data"]["category"] == note_data["category"]
 
-def test_delete_note(auth_client, notes_client):
+def test_delete_note(auth_client, notes_client, test_user):
     auth_client.login(
-        TEST_USER["email"],
-        TEST_USER["password"]
+        test_user["email"],
+        test_user["password"]
     )
 
     response = notes_client.create_note(NOTE)

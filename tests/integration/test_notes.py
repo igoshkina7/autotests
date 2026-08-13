@@ -83,7 +83,7 @@ def test_completed_note(notes, notes_client):
 
     assert not created_card.is_completed()
 
-    old_progress = notes.get_completed_count()
+    # old_progress = notes.get_completed_count()
 
     response = notes_client.completed_note(
         note_id,
@@ -107,7 +107,7 @@ def test_completed_note(notes, notes_client):
 
     completed_card = notes.get_note_by_id(note_id)
 
-    new_progress = notes.get_completed_count()
+    # new_progress = notes.get_completed_count()
 
     assert completed_card.is_completed()
     assert completed_card.get_title_background_color() == "rgba(40, 46, 41, 0.6)"

@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+env:
+  API_BASE_URL: https://practice.expandtesting.com/notes/api
+  BASE_URL: https://practice.expandtesting.com/notes/app
+
 jobs:
   test:
     runs-on: ubuntu-latest

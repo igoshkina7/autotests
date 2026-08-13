@@ -14,3 +14,4 @@ def test_login(auth_client):
     print(auth_client.session.headers)
 
     assert token
+    

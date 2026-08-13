@@ -23,6 +23,12 @@ def test_update_note(auth_client, notes_client, test_user):
         test_user["password"]
     )
 
+    response = notes_client.create_note(NOTE)
+
+    assert response.status_code == 200
+
+    note_id = response.json()["data"]["id"]
+
     note_data = {
         "title": "aaaaaaaaa",
         "description": "description aaaaaa",
@@ -30,25 +36,18 @@ def test_update_note(auth_client, notes_client, test_user):
         "category": "Home"
     }
 
-    #get_response = notes_client.get_notes()
-
-    #assert get_response.status_code == 200
-
-    notes = notes_client.get_notes()
-
-    assert notes
-    
-    note_id = notes[0]["id"]
-
-    put_response = notes_client.update_note(note_id, note_data)
+    put_response = notes_client.update_note(
+        note_id,
+        note_data
+    )
 
     assert put_response.status_code == 200
 
-    body_update_note = put_response.json()
+    body = put_response.json()
 
-    assert body_update_note["data"]["title"] == note_data["title"]
-    assert body_update_note["data"]["description"] == note_data["description"]
-    assert body_update_note["data"]["category"] == note_data["category"]
+    assert body["data"]["title"] == note_data["title"]
+    assert body["data"]["description"] == note_data["description"]
+    assert body["data"]["category"] == note_data["category"]
 
 def test_delete_note(auth_client, notes_client, test_user):
     auth_client.login(

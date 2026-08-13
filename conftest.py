@@ -9,12 +9,11 @@ from pages.notes_page import NotesPage
 import os
 from data.factories.user_factory import UserFactory
 
-@pytest.fixture()
+@pytest.fixture
 def test_user(auth_client):
     user = UserFactory.create()
 
     response = auth_client.register(**user)
-
     assert response.status_code == 201
 
     yield user
@@ -23,8 +22,6 @@ def test_user(auth_client):
         user["email"],
         user["password"]
     )
-
-    auth_client.delete_account()
 
 @pytest.fixture()
 def api_session():

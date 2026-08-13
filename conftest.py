@@ -2,15 +2,31 @@ import pytest
 from core.api_client import APIClient
 from config.config import BASE_API_URL, BASE_URL
 from playwright.sync_api import sync_playwright
-import re
-from pathlib import Path
 import requests
 from api.clients.auth_client import AuthClient
 from api.clients.notes_client import NotesClient
-from data.users import TEST_USER
 from pages.notes_page import NotesPage
+import os
+from data.factories.user_factory import UserFactory
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
+def test_user(auth_client):
+    user = UserFactory.create()
+
+    response = auth_client.register(**user)
+
+    assert response.status_code == 201
+
+    yield user
+
+    auth_client.login(
+        user["email"],
+        user["password"]
+    )
+
+    auth_client.delete_account()
+
+@pytest.fixture()
 def api_session():
     return requests.Session()
 
@@ -23,10 +39,10 @@ def notes_client(api_session):
     return NotesClient(api_session)
 
 @pytest.fixture
-def authorized_page(page, auth_client):
+def authorized_page(page, auth_client, test_user):
     token = auth_client.login(
-        TEST_USER["email"],
-        TEST_USER["password"]
+        test_user["email"],
+        test_user["password"]
     )
 
     page.add_init_script(
@@ -53,9 +69,11 @@ def api():
 @pytest.fixture
 def page(request):
     with sync_playwright() as p:
+
+        headless = os.getenv("HEADLESS", "false").lower() == "true"
+
         browser = p.chromium.launch(
-            headless=True,
-            slow_mo=500
+            headless=headless
         )
 
         context = browser.new_context()
@@ -81,84 +99,84 @@ def page(request):
 
         browser.close()
 
-@pytest.fixture
-def logged_in(page):
-    login_page = LoginPage(page)
+# @pytest.fixture
+# def logged_in(page):
+#     login_page = LoginPage(page)
 
-    login_page.open()
-    login_page.login("standard_user", "secret_sauce")
+#     login_page.open()
+#     login_page.login("standard_user", "secret_sauce")
 
-    login_page.wait_url(re.compile(r".*/inventory\.html"))
+#     login_page.wait_url(re.compile(r".*/inventory\.html"))
     
-    return page
+#     return page
 
-@pytest.fixture
-def cart_with_one_item(logged_in):
-    page = logged_in
-    inventory_page = InventoryPage(page)
+# @pytest.fixture
+# def cart_with_one_item(logged_in):
+#     page = logged_in
+#     inventory_page = InventoryPage(page)
 
-    old_count = inventory_page.header.get_cart_count()
+#     old_count = inventory_page.header.get_cart_count()
 
-    product = inventory_page.product_by_name("Sauce Labs Backpack")
+#     product = inventory_page.product_by_name("Sauce Labs Backpack")
 
-    name = product.name()
-    price = product.price()
+#     name = product.name()
+#     price = product.price()
 
-    product.add()
+#     product.add()
 
-    new_count = inventory_page.header.get_cart_count()
+#     new_count = inventory_page.header.get_cart_count()
 
-    assert new_count == old_count + 1
+#     assert new_count == old_count + 1
 
-    inventory_page.open_cart()
+#     inventory_page.open_cart()
 
-    inventory_page.wait_url(re.compile(r".*/cart\.html"))
+#     inventory_page.wait_url(re.compile(r".*/cart\.html"))
 
-    return page, {
-        "name": name,
-        "price": price
-    }
+#     return page, {
+#         "name": name,
+#         "price": price
+#     }
 
-@pytest.fixture
-def empty_cart(logged_in):
-    page = logged_in
-    inventory_page = InventoryPage(page)
+# @pytest.fixture
+# def empty_cart(logged_in):
+#     page = logged_in
+#     inventory_page = InventoryPage(page)
 
-    inventory_page.open_cart()
+#     inventory_page.open_cart()
     
-    inventory_page.wait_url(re.compile(r".*/cart\.html"))
+#     inventory_page.wait_url(re.compile(r".*/cart\.html"))
 
-    return page
+#     return page
 
-@pytest.fixture
-def cart_with_two_items(logged_in):
-    page = logged_in
-    inventory_page = InventoryPage(page)
+# @pytest.fixture
+# def cart_with_two_items(logged_in):
+#     page = logged_in
+#     inventory_page = InventoryPage(page)
 
-    old_count = inventory_page.header.get_cart_count()
+#     old_count = inventory_page.header.get_cart_count()
 
-    products = []
+#     products = []
 
-    for i in range(2):
-        product = inventory_page.product(i)
+#     for i in range(2):
+#         product = inventory_page.product(i)
 
-        products.append({
-            "name": product.name(),
-            "price": product.price()
-        })
+#         products.append({
+#             "name": product.name(),
+#             "price": product.price()
+#         })
 
-        product.add()
+#         product.add()
 
-    new_count = inventory_page.header.get_cart_count()
+#     new_count = inventory_page.header.get_cart_count()
 
-    assert new_count == old_count + 2
+#     assert new_count == old_count + 2
 
-    inventory_page.open_cart()
-    inventory_page.wait_url(
-        re.compile(r".*/cart\.html")
-    )
+#     inventory_page.open_cart()
+#     inventory_page.wait_url(
+#         re.compile(r".*/cart\.html")
+#     )
 
-    return page, products
+#     return page, products
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):

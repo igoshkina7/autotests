@@ -27,8 +27,10 @@ jobs:
       - name: Install Playwright browsers
         run: playwright install chromium
 
-      # - name: Run API tests
-      #   run: pytest tests/api
+      - name: Run API tests
+        run: pytest tests/api
 
       - name: Run tests
+        env:
+          HEADLESS: true
         run: pytest tests/integration

@@ -1,17 +1,14 @@
-from data.users import TEST_USER
-
-def test_register(auth_client):
-    response = auth_client.register(**TEST_USER)
+def test_register(auth_client, test_user):
+    response = auth_client.register(**test_user)
     
     assert response.status_code == 201 
 
-def test_login(auth_client):
+def test_login(auth_client, test_user):
     token = auth_client.login(
-        TEST_USER["email"],
-        TEST_USER["password"]
+        test_user["email"],
+        test_user["password"]
     )
 
     print(auth_client.session.headers)
 
     assert token
-    

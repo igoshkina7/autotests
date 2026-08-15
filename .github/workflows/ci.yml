@@ -28,9 +28,33 @@ jobs:
         run: playwright install chromium
 
       - name: Run API tests
-        run: pytest tests/api
+        run: |
+          pytest tests/api \
+            --html=api-report.html \
+            --junitxml=api-results.xml
 
-      - name: Run tests
+      - name: Run Integration tests
         env:
           HEADLESS: true
-        run: pytest tests/integration
+        run: |
+          pytest tests/integration \
+            --html=integration-report.html \
+            --junitxml=integration-results.xml
+
+      - name: Upload API reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-reports
+          path: |
+            api-report.html
+            api-results.xml
+
+      - name: Upload Integration reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-reports
+          path: |
+            integration-report.html
+            integration-results.xml
